@@ -56,6 +56,6 @@ pole2 = get_wave_function(onde2,XX,YY,1,dx=-.25,opposite_phase=True)
 #On les additionnes
 bipole = pole1 + pole2
 #On les affiche
-plt.imshow(bipole,vmin=-.5,vmax=.5,cmap='plasma')
+plt.imshow(bipole,vmin=-.5,vmax=.5,cmap='Blues')
 plt.colorbar()
 plt.show()
