@@ -88,8 +88,22 @@ def simulation_5poles(f):
 	plt.title("5 poles en phase, $f={}Hz$".format(f))
 	plt.show()
 	
+def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution):
+	#Création d'une onde
+	onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
+	#Création du maillage
+	XX,YY = np.meshgrid(np.linspace(xmin,xmax,resolution),np.linspace(ymin,\
+	ymax,resolution))
+	#Création et somme des poles
+	source = sum([get_wave_function(onde,XX,YY,t,dx=elm[0],dy=elm[1]) for elm in array])
+	
+	plt.imshow(source,vmax=len(array),vmin=-len(array),cmap='Blues')
+	plt.show()
+	
 if __name__ == "__main__":
-	simulation_2pole_hors_phase()
-	simulation_5poles(100)
-	simulation_5poles(1000)
-	simulation_5poles(10000)
+	#simulation_2pole_hors_phase()
+	#simulation_5poles(100)
+	#simulation_5poles(1000)
+	#simulation_5poles(10000)
+	poles=((0,0),(0,1),(1,0),(1,1))
+	simulation_n_poles(1000,poles,-1,9,-5,5,1,1000)
