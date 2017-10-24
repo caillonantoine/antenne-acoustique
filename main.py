@@ -174,7 +174,7 @@ if __name__ == "__main__":
 	zz = 2*(xx -4)
 	
 	#simulation sur le plan
-	simulation = simulation_n_poles(440,poles,2,6,-8,8,1,1000,lambda x,y:2*(x-4))
+	simulation = simulation_n_poles(10000,poles,2,6,-8,8,1,1000,lambda x,y:2*(x-4))
 	
 	#représentation 3D
 	representation_physique(poles,xx,yy,zz,simulation)	
