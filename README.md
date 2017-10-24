@@ -7,7 +7,7 @@ But:
 
 >Le placement de plusieurs poles alignés permet la pseudo création d'une onde plane, sur un axe. Il faudrait voir si theoriquement on a une diminution de la perte en dB sur un doublement de distance. 
 
-![reconstruction d'une onde plane](fig/f1000.png
+![reconstruction d'une onde plane](fig/f1000.png)
 
 
 > Modéliser dans l'espace le rayonnement d'une source constituée de monopoles considérés unidirectionels
