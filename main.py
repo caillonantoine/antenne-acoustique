@@ -42,33 +42,52 @@ def animation(wave,timeline,vmin,vmax):
  
 #%%
 #On crée deux types d'ondes
-onde1 = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
-onde2 = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
+
 #%%
 #On crée le maillage
-X = np.linspace(0-1,9,1000)
-Y = np.linspace(-7,3,1000)
-XX,YY = np.meshgrid(X,Y)
-#%%
-#On calcule les amplitudes des deux poles
-pole1 = get_wave_function(onde1,XX,YY,1)
-pole2 = get_wave_function(onde2,XX,YY,1,dx=-.25,opposite_phase=True)
-#On les additionnes
-bipole = pole1 + pole2
-#On les affiche
-plt.imshow(bipole,vmin=-.5,vmax=.5,cmap='Blues')
-plt.colorbar()
-plt.show()
 
 #%%
-pole1 = get_wave_function(onde2,XX,YY,1,dx=0, dy=0,opposite_phase=True)
-pole2 = get_wave_function(onde2,XX,YY,1,dx=.15, dy=1,opposite_phase=True)
-pole3 = get_wave_function(onde2,XX,YY,1,dx=.25, dy=2,opposite_phase=True)
-pole4 = get_wave_function(onde2,XX,YY,1,dx=.15, dy=3,opposite_phase=True)
-pole5 = get_wave_function(onde2,XX,YY,1,dx=0, dy=4,opposite_phase=True)
+def simulation_2pole_hors_phase():
+	#création du maillage
+	X = np.linspace(-10,10,1000)
+	Y = np.linspace(-10,10,1000)
+	XX,YY = np.meshgrid(X,Y)
+	#création de deux ondes
+	onde1 = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
+	onde2 = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
+	#On calcule les amplitudes des deux poles
+	pole1 = get_wave_function(onde1,XX,YY,1)
+	pole2 = get_wave_function(onde2,XX,YY,1,dx=-.25,opposite_phase=True)
+	#On les additionnes
+	bipole = pole1 + pole2
+	#On les affiche
+	plt.imshow(bipole,vmin=-.5,vmax=.5,cmap='Blues')
+	plt.colorbar()
+	plt.title("Rayonnement de deux poles en opposition de phase")
+	plt.show()
 
-source = pole1 + pole2 + pole3 + pole4 + pole5
-
-plt.imshow(source,vmax = 3, vmin = -3,cmap='Blues')
-plt.colorbar()
-plt.show()
+#%%
+def simulation_5poles():
+	#création du maillage
+	X = np.linspace(-1,9,1000)
+	Y = np.linspace(-7,3,1000)
+	XX,YY = np.meshgrid(X,Y)
+	#création d'une onde
+	onde = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
+	#création des 5 poles
+	pole1 = get_wave_function(onde,XX,YY,1,dx=0, dy=0,opposite_phase=True)
+	pole2 = get_wave_function(onde,XX,YY,1,dx=.15, dy=1,opposite_phase=True)
+	pole3 = get_wave_function(onde,XX,YY,1,dx=.25, dy=2,opposite_phase=True)
+	pole4 = get_wave_function(onde,XX,YY,1,dx=.15, dy=3,opposite_phase=True)
+	pole5 = get_wave_function(onde,XX,YY,1,dx=0, dy=4,opposite_phase=True)
+	
+	source = pole1 + pole2 + pole3 + pole4 + pole5
+	
+	plt.imshow(source,vmax = 3, vmin = -3,cmap='Blues')
+	plt.colorbar()
+	plt.title("Rayonnement de 5 poles en phase")
+	plt.show()
+	
+if __name__ == "__main__":
+	simulation_2pole_hors_phase()
+	simulation_5poles()
