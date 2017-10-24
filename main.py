@@ -2,6 +2,9 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 from math import *
+from mpl_toolkits.mplot3d import Axes3D
+
+
 
 class Wave(object):
 	"""Classe contenant les attributs d'une onde harmonique sphérique
@@ -43,6 +46,42 @@ def animation(wave,timeline,vmin,vmax):
 	vmax: valeur minimale affichée"""
 	for i,elm in enumerate(timeline):
 		plt.imsave('image_{:06d}'.format(i),wave(elm),vmin=vmin,vmax=vmax,cmap='plasma')
+		
+def representation_physique(poles,X,Y,Z,simulation):
+	"""Fonction représentant dans un espace 3d les résultats de la simulation.
+	poles: position des poles
+	X: mesh X
+	Y: mesh Y
+	Z: mesh Z
+	simulation: mesh 2D contenant les valeurs d'amplitude"""
+	
+	simulation = abs(np.real(simulation))
+	simulation = (100*simulation/(np.max(simulation))).astype('int')/100.
+	
+	fig = plt.figure()
+	ax = fig.add_subplot(111, projection='3d')
+	
+	for elm in poles:
+		ax.scatter(elm[0],elm[1],elm[2])
+		
+	
+	
+	colors = np.empty(simulation.shape,dtype=tuple)
+	for i in range(len(simulation)):
+		for j in range(len(simulation[0])):
+			colors[i,j] = .5*simulation[i,j],.5*simulation[i,j],simulation[i,j]
+	
+	
+
+	ax.plot_surface(X,Y,Z,facecolors=colors)
+	plt.title("Representation de la simulation")
+	plt.show()
+	
+	plt.imshow(simulation)
+	plt.colorbar()
+	plt.title("Rayonnement de la source sur le plan")
+	plt.show()	
+	
  
 #%%
 #On crée deux types d'ondes
@@ -110,17 +149,33 @@ def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution,\
 	#Création et somme des poles
 	source = sum([get_wave_function(onde,XX,YY,t,dx=elm[0],dy=elm[1],dz=elm[2],\
 				eq_plan=eq_plan) for elm in array])
+	return source
 	
-	plt.imshow(source,vmax=len(array),vmin=-len(array),cmap='Blues_r')
-	plt.colorbar()
-	plt.title("{} poles en phase, $f={}Hz$".format(len(array),f))
-	plt.show()
+	#plt.imshow(source,cmap='Blues_r')
+	#plt.colorbar()
+	#plt.title("{} poles en phase, $f={}Hz$".format(len(array),f))
+	#plt.show()
 	
 if __name__ == "__main__":
-	#simulation_2pole_hors_phase()
-	#simulation_5poles(100)
-	#1simulation_5poles(1000)
-	#simulation_5poles(10000)
+	#Simulation de plusieurs cas en 2D
+	simulation_2pole_hors_phase()
+	simulation_5poles(100)
+	simulation_5poles(1000)
+	simulation_5poles(10000)
 	
-	poles = (0,0,0),(1,1,1)
-	simulation_n_poles(1000,poles,-1,5,-5,1,1,1000,lambda x,y:x+y)
+	#Placement de deux arrays de monopoles
+	poles=(0,2,4),(0,2,3),(-.1,2,2),(-.3,2,1),(-.8,2,.25),\
+		(0,-2,4),(0,-2,3),(-.1,-2,2),(-.3,-2,1),(-.8,-2,.25)
+		
+	#Placement d'un plan de simulation
+	x = np.linspace(2,6,1000)
+	y = np.linspace(-8,8,1000)
+	xx,yy = np.meshgrid(x,y)
+	zz = 2*(xx -4)
+	
+	#simulation sur le plan
+	simulation = simulation_n_poles(440,poles,2,6,-8,8,1,1000,lambda x,y:2*(x-4))
+	
+	#représentation 3D
+	representation_physique(poles,xx,yy,zz,simulation)	
+	
