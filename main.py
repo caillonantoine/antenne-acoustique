@@ -97,13 +97,16 @@ def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution):
 	#Création et somme des poles
 	source = sum([get_wave_function(onde,XX,YY,t,dx=elm[0],dy=elm[1]) for elm in array])
 	
-	plt.imshow(source,vmax=len(array),vmin=-len(array),cmap='Blues')
+	plt.imshow(source,vmax=len(array),vmin=-len(array),cmap='Blues_r')
+	plt.colorbar()
+	plt.title("{} poles en phase, $f={}Hz$".format(len(array),f))
 	plt.show()
 	
 if __name__ == "__main__":
-	#simulation_2pole_hors_phase()
+	simulation_2pole_hors_phase()
 	#simulation_5poles(100)
-	#simulation_5poles(1000)
+	#1simulation_5poles(1000)
 	#simulation_5poles(10000)
-	poles=((0,0),(0,1),(1,0),(1,1))
-	simulation_n_poles(1000,poles,-1,9,-5,5,1,1000)
+	
+	poles=(0,0),(.15,1),(.25,2),(.15,3),(0,4)
+	simulation_n_poles(1000,poles,-1,5,-5,1,1,1000)
