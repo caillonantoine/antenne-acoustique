@@ -63,17 +63,17 @@ def simulation_2pole_hors_phase():
 	#On les affiche
 	plt.imshow(bipole,vmin=-.5,vmax=.5,cmap='Blues')
 	plt.colorbar()
-	plt.title("Rayonnement de deux poles en opposition de phase")
+	plt.title("2 poles en opposition de phase")
 	plt.show()
 
 #%%
-def simulation_5poles():
+def simulation_5poles(f):
 	#création du maillage
 	X = np.linspace(-1,9,1000)
 	Y = np.linspace(-7,3,1000)
 	XX,YY = np.meshgrid(X,Y)
 	#création d'une onde
-	onde = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
+	onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
 	#création des 5 poles
 	pole1 = get_wave_function(onde,XX,YY,1,dx=0, dy=0,opposite_phase=True)
 	pole2 = get_wave_function(onde,XX,YY,1,dx=.15, dy=1,opposite_phase=True)
@@ -85,9 +85,11 @@ def simulation_5poles():
 	
 	plt.imshow(source,vmax = 3, vmin = -3,cmap='Blues')
 	plt.colorbar()
-	plt.title("Rayonnement de 5 poles en phase")
+	plt.title("5 poles en phase, $f={}Hz$".format(f))
 	plt.show()
 	
 if __name__ == "__main__":
 	simulation_2pole_hors_phase()
-	simulation_5poles()
+	simulation_5poles(100)
+	simulation_5poles(1000)
+	simulation_5poles(10000)
