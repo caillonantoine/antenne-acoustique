@@ -13,7 +13,8 @@ class Wave(object):
 		self.w = w
 		self.k = k
 
-def get_wave_function(wave,x,y,t,dx=0,dy=0,opposite_phase=False):
+def get_wave_function(wave,x,y,t,dx=0,dy=0,dz=0,opposite_phase=False,\
+	eq_plan=lambda x,y:0):
 	"""Retourne la fonction d'onde solution du rayonnement d'une source sphérique
 	wave: object de type Wave, contenant s0,w,k
 	x: coordonnée x
@@ -21,9 +22,12 @@ def get_wave_function(wave,x,y,t,dx=0,dy=0,opposite_phase=False):
 	t: temps
 	dx: décalage en x de la source par rapport à l'origine
 	dy: décalage en y de la source par rapport à l'origine
-	opposite_phase: si True, inverse la phase de la fonction d'onde"""
+	dz: décalage en z de la source par rapport à l'origine
+	opposite_phase: si True, inverse la phase de la fonction d'onde
+	eq_plan: fonction qui a x,y associe une valeur z"""
 	#calcul de la distance à la source
-	r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y+dy,2)),dtype=np.float)
+	r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y+dy,2) +\
+				np.power(eq_plan(x-dx,y+dy)-dz,2)),dtype=np.float)
 	
 	#calcul de l'amplitude de l'onde en fonction de sa phase
 	if opposite_phase:
@@ -88,14 +92,24 @@ def simulation_5poles(f):
 	plt.title("5 poles en phase, $f={}Hz$".format(f))
 	plt.show()
 	
-def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution):
+def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution,\
+					eq_plan=lambda x,y:0):
+	"""Simule une source composée de n monopoles
+	f: fréquence en Hz d'oscillation
+	array: liste de tuples contenant la position dans l'espace des poles
+	xmin-xmax: positionement x de la fenetre d'observation
+	ymin-ymax: positionement y de la fenetre d'obeservation
+	t: temps utilisé pour la simulation
+	resolution: resolution de la fenetre d'observation
+	eq_plan= equation du plan de la fenetre d'observation"""
 	#Création d'une onde
 	onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
 	#Création du maillage
 	XX,YY = np.meshgrid(np.linspace(xmin,xmax,resolution),np.linspace(ymin,\
 	ymax,resolution))
 	#Création et somme des poles
-	source = sum([get_wave_function(onde,XX,YY,t,dx=elm[0],dy=elm[1]) for elm in array])
+	source = sum([get_wave_function(onde,XX,YY,t,dx=elm[0],dy=elm[1],dz=elm[2],\
+				eq_plan=eq_plan) for elm in array])
 	
 	plt.imshow(source,vmax=len(array),vmin=-len(array),cmap='Blues_r')
 	plt.colorbar()
@@ -103,10 +117,10 @@ def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution):
 	plt.show()
 	
 if __name__ == "__main__":
-	simulation_2pole_hors_phase()
+	#simulation_2pole_hors_phase()
 	#simulation_5poles(100)
 	#1simulation_5poles(1000)
 	#simulation_5poles(10000)
 	
-	poles=(0,0),(.15,1),(.25,2),(.15,3),(0,4)
-	simulation_n_poles(1000,poles,-1,5,-5,1,1,1000)
+	poles = (0,0,0),(1,1,1)
+	simulation_n_poles(1000,poles,-1,5,-5,1,1,1000,lambda x,y:x+y)
