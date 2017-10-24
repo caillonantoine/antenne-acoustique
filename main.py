@@ -166,15 +166,15 @@ if __name__ == "__main__":
 	#Placement de deux arrays de monopoles
 	poles=(0,2,4),(0,2,3),(-.1,2,2),(-.3,2,1),(-.8,2,.25),\
 		(0,-2,4),(0,-2,3),(-.1,-2,2),(-.3,-2,1),(-.8,-2,.25)
-		
+	#%%
 	#Placement d'un plan de simulation
 	x = np.linspace(2,6,1000)
 	y = np.linspace(-8,8,1000)
 	xx,yy = np.meshgrid(x,y)
-	zz = 2*(xx -4)
+	zz = 2*(xx -9)
 	
 	#simulation sur le plan
-	simulation = simulation_n_poles(10000,poles,2,6,-8,8,1,1000,lambda x,y:2*(x-4))
+	simulation = simulation_n_poles(220,poles,2,6,-8,8,1,1000,lambda x,y:2*(x-9))
 	
 	#représentation 3D
 	representation_physique(poles,xx,yy,zz,simulation)	
