@@ -23,7 +23,7 @@ def get_wave_function(wave,x,y,t,dx=0,dy=0,opposite_phase=False):
 	dy: décalage en y de la source par rapport à l'origine
 	opposite_phase: si True, inverse la phase de la fonction d'onde"""
 	#calcul de la distance à la source
-	r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y-dy,2)),dtype=np.float)
+	r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y+dy,2)),dtype=np.float)
 	
 	#calcul de l'amplitude de l'onde en fonction de sa phase
 	if opposite_phase:
@@ -46,8 +46,8 @@ onde1 = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
 onde2 = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
 #%%
 #On crée le maillage
-X = np.linspace(-10,10,1000)
-Y = np.linspace(-10,10,1000)
+X = np.linspace(0-1,9,1000)
+Y = np.linspace(-7,3,1000)
 XX,YY = np.meshgrid(X,Y)
 #%%
 #On calcule les amplitudes des deux poles
@@ -57,5 +57,18 @@ pole2 = get_wave_function(onde2,XX,YY,1,dx=-.25,opposite_phase=True)
 bipole = pole1 + pole2
 #On les affiche
 plt.imshow(bipole,vmin=-.5,vmax=.5,cmap='Blues')
+plt.colorbar()
+plt.show()
+
+#%%
+pole1 = get_wave_function(onde2,XX,YY,1,dx=0, dy=0,opposite_phase=True)
+pole2 = get_wave_function(onde2,XX,YY,1,dx=.15, dy=1,opposite_phase=True)
+pole3 = get_wave_function(onde2,XX,YY,1,dx=.25, dy=2,opposite_phase=True)
+pole4 = get_wave_function(onde2,XX,YY,1,dx=.15, dy=3,opposite_phase=True)
+pole5 = get_wave_function(onde2,XX,YY,1,dx=0, dy=4,opposite_phase=True)
+
+source = pole1 + pole2 + pole3 + pole4 + pole5
+
+plt.imshow(source,vmax = 3, vmin = -3,cmap='Blues')
 plt.colorbar()
 plt.show()
