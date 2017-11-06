@@ -25,12 +25,13 @@ def get_pressure(wave,x,y,t,dx=0,dy=0,dz=0,opposite_phase=False,\
         return (np.real((wave.s0/r)*np.exp(wave.k*r*1j - wave.w*t*1j))).astype('float')
     
 def get_intensity_around_circle(r,pressure,duree,pas):
+    """A VERIFIER"""
     space = np.linspace(0,2*pi,1000)
     circlex = np.asarray([r*cos(theta) for theta in space])
     circley = np.asarray([r*sin(theta) for theta in space])
     
-    intensity = sum([pressure(circlex,circley,t) for t in np.linspace(0,duree,pas)])
-    return space,abs(intensity)
+    intensity = sum([abs(np.power(pressure(circlex,circley,t),2)) for t in np.linspace(0,duree,pas)])/float(pas)
+    return space,intensity
     
     
 if __name__ == "__main__":
@@ -38,7 +39,7 @@ if __name__ == "__main__":
     
     poles = []
     poles.append(Pole(0,0,False))
-    poles.append(Pole(-.1,0,True))
+    poles.append(Pole(-.05,0,True))
     
     x = np.linspace(-10,10,1000)
     y = np.linspace(-10,10,1000)
