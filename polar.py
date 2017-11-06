@@ -31,24 +31,22 @@ def get_intensity_around_circle(r,pressure,duree,pas):
     circley = np.asarray([r*sin(theta) for theta in space])
     
     intensity = sum([abs(np.power(pressure(circlex,circley,t),2)) for t in np.linspace(0,duree,pas)])/float(pas)
-    return space,intensity
+    return space,intensity/np.max(intensity)
     
     
 if __name__ == "__main__":
-    onde = Wave(1,2*pi*440,sqrt(2*pi*440/340.))
+    onde = Wave(1,2*pi*10000,sqrt(2*pi*440/340.))
     
     poles = []
-    poles.append(Pole(0,0,False))
-    poles.append(Pole(-.05,0,True))
-    
-    x = np.linspace(-10,10,1000)
-    y = np.linspace(-10,10,1000)
-    xx,yy = np.meshgrid(x,y)
+    poles.append(Pole(.1,0,True))
+    poles.append(Pole(-.1,0,False))
     
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y, opposite_phase=p.opp_phase) for p in poles])
     
-    intensity = get_intensity_around_circle(1,get_source_pressure,.5,100)
+    intensity = get_intensity_around_circle(5,get_source_pressure,.5,100)
     plt.polar(*intensity)
+    plt.savefig("polar_bipole.png")
+    plt.show()
     
 
     

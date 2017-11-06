@@ -36,7 +36,7 @@ def get_wave_function(wave,x,y,t,dx=0,dy=0,dz=0,opposite_phase=False,\
 	if opposite_phase:
 		return -((wave.s0/r)*np.exp(wave.k*r*1j - wave.w*t*1j)).astype('float')
 	else:
-		return ((wave.s0/r)*np.exp(wave.k*r*1j - wave.w*t*1j)).astype('float')
+		return (np.real((wave.s0/r)*np.exp(wave.k*r*1j - wave.w*t*1j))).astype('float')
         
 def animation(wave,timeline,vmin,vmax):
 	"""Crée une série d'image
@@ -127,6 +127,12 @@ def simulation_5poles(f,t):
     source = pole1 + pole2 + pole3 + pole4 + pole5
 	
     return source
+
+def simulation_poles_n_point(f,t,poles):
+    onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
+    def sim(x,y):
+        return sum([get_wave_function(onde,x,y,t,dx=elm[0],dy=elm[1]) for elm in poles])
+    return sim
 	
 def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution,\
 					eq_plan=lambda x,y:0):
@@ -148,12 +154,7 @@ def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution,\
 				eq_plan=eq_plan) for elm in array])
 	return source
 	
-	#plt.imshow(source,cmap='Blues_r')
-	#plt.colorbar()
-	#plt.title("{} poles en phase, $f={}Hz$".format(len(array),f))
-	#plt.show()
-	
-def intensite_over_time(simulation, duree, pas):
+def intensity_over_time(simulation, duree, pas):
     """Donne une approximation de l'intensitée acoustique """
     space = np.linspace(0,duree,pas)
     intensite = np.zeros_like(simulation(0))
