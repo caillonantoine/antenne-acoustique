@@ -110,26 +110,23 @@ def simulation_2pole_hors_phase():
 	plt.show()
 
 #%%
-def simulation_5poles(f):
-	#création du maillage
-	X = np.linspace(-1,9,1000)
-	Y = np.linspace(-7,3,1000)
-	XX,YY = np.meshgrid(X,Y)
-	#création d'une onde
-	onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
-	#création des 5 poles
-	pole1 = get_wave_function(onde,XX,YY,1,dx=0, dy=0,opposite_phase=True)
-	pole2 = get_wave_function(onde,XX,YY,1,dx=.15, dy=1,opposite_phase=True)
-	pole3 = get_wave_function(onde,XX,YY,1,dx=.25, dy=2,opposite_phase=True)
-	pole4 = get_wave_function(onde,XX,YY,1,dx=.15, dy=3,opposite_phase=True)
-	pole5 = get_wave_function(onde,XX,YY,1,dx=0, dy=4,opposite_phase=True)
+def simulation_5poles(f,t):
+    """Simule la pulsation de 5 poles à une fréquence f au temps t"""
+    X = np.linspace(-1,9,1000)
+    Y = np.linspace(-7,3,1000)
+    XX,YY = np.meshgrid(X,Y)
+    #création d'une onde
+    onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
+    #création des 5 poles
+    pole1 = get_wave_function(onde,XX,YY,t,dx=0, dy=0,opposite_phase=True)
+    pole2 = get_wave_function(onde,XX,YY,t,dx=.15, dy=1,opposite_phase=True)
+    pole3 = get_wave_function(onde,XX,YY,t,dx=.25, dy=2,opposite_phase=True)
+    pole4 = get_wave_function(onde,XX,YY,t,dx=.15, dy=3,opposite_phase=True)  
+    pole5 = get_wave_function(onde,XX,YY,t,dx=0, dy=4,opposite_phase=True)
 	
-	source = pole1 + pole2 + pole3 + pole4 + pole5
+    source = pole1 + pole2 + pole3 + pole4 + pole5
 	
-	plt.imshow(source,vmax = 3, vmin = -3,cmap='Blues')
-	plt.colorbar()
-	plt.title("5 poles en phase, $f={}Hz$".format(f))
-	plt.show()
+    return source
 	
 def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution,\
 					eq_plan=lambda x,y:0):
@@ -156,26 +153,11 @@ def simulation_n_poles(f,array,xmin,xmax,ymin,ymax,t,resolution,\
 	#plt.title("{} poles en phase, $f={}Hz$".format(len(array),f))
 	#plt.show()
 	
-if __name__ == "__main__":
-	#Simulation de plusieurs cas en 2D
-	simulation_2pole_hors_phase()
-	simulation_5poles(100)
-	simulation_5poles(1000)
-	simulation_5poles(10000)
-	
-	#Placement de deux arrays de monopoles
-	poles=(0,2,4),(0,2,3),(-.1,2,2),(-.3,2,1),(-.8,2,.25),\
-		(0,-2,4),(0,-2,3),(-.1,-2,2),(-.3,-2,1),(-.8,-2,.25)
-	#%%
-	#Placement d'un plan de simulation
-	x = np.linspace(2,6,1000)
-	y = np.linspace(-8,8,1000)
-	xx,yy = np.meshgrid(x,y)
-	zz = 2*(xx -9)
-	
-	#simulation sur le plan
-	simulation = simulation_n_poles(220,poles,2,6,-8,8,1,1000,lambda x,y:2*(x-9))
-	
-	#représentation 3D
-	representation_physique(poles,xx,yy,zz,simulation)	
+def intensite_over_time(simulation, duree, pas):
+    """Donne une approximation de l'intensitée acoustique """
+    space = np.linspace(0,duree,pas)
+    intensite = np.zeros_like(simulation(0))
+    for elm in space:
+        intensite += simulation(elm)
+    return intensite/len(space)
 	
