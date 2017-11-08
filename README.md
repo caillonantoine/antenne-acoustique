@@ -9,11 +9,12 @@ But:
 
 ![reconstruction d'une onde plane](fig/f1000.png)
 
+### Construction d'un diagramme polaire de directivité en fonction de sources
 
-> Modéliser dans l'espace le rayonnement d'une source constituée de monopoles considérés unidirectionels
+En combinant plusieurs monopoles ensemble, on peut construire des sources ayant une directivité proche de celles du monde réeelle.
+On obtient par exemple ce genre de diagramme:
 
-![Image de la simulation](fig/simulation.png)
-![Résultat de la simulation](fig/rayonnement.png)
+![diagramme de directivité](polar_bipole.png)
 
 Application:
 > Recréer les fiches techniques de systèmes d'antenne existant
