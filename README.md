@@ -14,7 +14,7 @@ But:
 En combinant plusieurs monopoles ensemble, on peut construire des sources ayant une directivité proche de celles du monde réeelle.
 On obtient par exemple ce genre de diagramme:
 
-![diagramme de directivité](polar_bipole.png)
+![diagramme de directivité](fig/polar_bipole.png)
 
 Application:
 > Recréer les fiches techniques de systèmes d'antenne existant
