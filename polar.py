@@ -14,6 +14,7 @@ class Pole(object):
         self.x = x
         self.y = y
         self.opp_phase = opp_phase
+    
 
 def get_pressure(wave,x,y,t,dx=0,dy=0,dz=0,opposite_phase=False,\
                  eq_plan=lambda x,y:0):
@@ -24,29 +25,58 @@ def get_pressure(wave,x,y,t,dx=0,dy=0,dz=0,opposite_phase=False,\
     else:
         return (np.real((wave.s0/r)*np.exp(wave.k*r*1j - wave.w*t*1j))).astype('float')
     
-def get_intensity_around_circle(r,pressure,duree,pas):
-    """A VERIFIER"""
+def get_intensity_around_circle(r,pressure,pas,period):
+    """r distance d'évaluation de la pression efficace
+    pressure fonction x,y,t -> pression instantanée
+    pas: precision de la simulation, higher = better
+    period : période d'oscillation de la source"""
     space = np.linspace(0,2*pi,1000)
     circlex = np.asarray([r*cos(theta) for theta in space])
     circley = np.asarray([r*sin(theta) for theta in space])
+				
+				
+    intensity = sum([np.power(pressure(circlex,circley,t),2) for t in np.linspace(0,period,pas)])/float(pas)
+    return space,np.sqrt(intensity)
     
-    intensity = sum([abs(np.power(pressure(circlex,circley,t),2)) for t in np.linspace(0,duree,pas)])/float(pas)
-    return space,intensity/np.max(intensity)
-    
+#%%
     
 if __name__ == "__main__":
-    onde = Wave(1,2*pi*10000,sqrt(2*pi*440/340.))
+    f=10000.    
+    
+    onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
     
     poles = []
-    poles.append(Pole(.1,0,True))
-    poles.append(Pole(-.1,0,False))
+    poles.append(Pole(0,1.5,True))
+    poles.append(Pole(0,.5,True))
+    poles.append(Pole(0,-.5,True))
+    poles.append(Pole(0,-1.5,True))
+    
+    poles.append(Pole(-.2,1.5,False))
+    poles.append(Pole(-.2,.5,False))
+    poles.append(Pole(-.2,-.5,False))
+    poles.append(Pole(-.2,-1.5,False))
     
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y, opposite_phase=p.opp_phase) for p in poles])
     
-    intensity = get_intensity_around_circle(5,get_source_pressure,.5,100)
+    #PLOT DE LA SOURCE
+
+    x = np.linspace(-5,5,1000)
+    y = np.linspace(-5,5,1000)
+    xx,yy = np.meshgrid(x,y)
+    source = get_source_pressure(xx,yy,1)
+    plt.imshow(source,vmin=-5,vmax=5,cmap='Blues')
+    plt.title("Representation 2D de la source pour $f={}$".format(f))
+    plt.show()
+    
+    #PLOT DE LA DIRECTIVITE DE LA SOURCE    
+    
+    intensity = get_intensity_around_circle(3,get_source_pressure,200,1/f)
     plt.polar(*intensity)
     plt.savefig("polar_bipole.png")
+    plt.title("Directivite de la source pour $f={}$".format(f))
     plt.show()
+    
+    
     
 
     
