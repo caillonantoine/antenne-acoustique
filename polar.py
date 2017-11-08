@@ -16,10 +16,9 @@ class Pole(object):
         self.opp_phase = opp_phase
     
 
-def get_pressure(wave,x,y,t,dx=0,dy=0,dz=0,opposite_phase=False,\
-                 eq_plan=lambda x,y:0):
+def get_pressure(wave,x,y,t,dx=0,dy=0,opposite_phase=False):
     
-    r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y+dy,2) + np.power(eq_plan(x-dx,y+dy)-dz,2)),dtype=np.float)
+    r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y+dy,2)),dtype=np.float)
     if opposite_phase:
         return -(np.real((wave.s0/r)*np.exp(wave.k*r*1j - wave.w*t*1j))).astype('float')
     else:
@@ -46,15 +45,11 @@ if __name__ == "__main__":
     onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
     
     poles = []
-    poles.append(Pole(0,1.5,True))
-    poles.append(Pole(0,.5,True))
-    poles.append(Pole(0,-.5,True))
-    poles.append(Pole(0,-1.5,True))
+    poles.append(Pole(-.1,.1,True))
+    poles.append(Pole(-.1,-.1,False))
     
-    poles.append(Pole(-.2,1.5,False))
-    poles.append(Pole(-.2,.5,False))
-    poles.append(Pole(-.2,-.5,False))
-    poles.append(Pole(-.2,-1.5,False))
+    poles.append(Pole(.1,.1,False))
+    poles.append(Pole(.1,-.1,True))
     
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y, opposite_phase=p.opp_phase) for p in poles])
     
@@ -64,8 +59,10 @@ if __name__ == "__main__":
     y = np.linspace(-5,5,1000)
     xx,yy = np.meshgrid(x,y)
     source = get_source_pressure(xx,yy,1)
-    plt.imshow(source,vmin=-5,vmax=5,cmap='Blues')
+    plt.imshow(source,vmin=-5,vmax=5,cmap='Blues',extent=[-5,5,-5,5])
     plt.title("Representation 2D de la source pour $f={}$".format(f))
+    plt.xlabel("$x$")
+    plt.ylabel("$y$")
     plt.show()
     
     #PLOT DE LA DIRECTIVITE DE LA SOURCE    
