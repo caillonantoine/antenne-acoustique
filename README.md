@@ -9,7 +9,7 @@ But:
 
 ![reconstruction d'une onde plane](fig/f1000.png)
 
-#Construction d'un diagramme polaire de directivité en fonction de sources
+### Construction d'un diagramme polaire de directivité en fonction de sources
 
 En combinant plusieurs monopoles ensemble, on peut construire des sources ayant une directivité proche de celles du monde réeelle.
 On obtient par exemple ce genre de diagramme:
