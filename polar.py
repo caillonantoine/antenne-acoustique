@@ -40,26 +40,28 @@ def get_intensity_around_circle(r,pressure,pas,period):
 #%%
     
 if __name__ == "__main__":
-    f=10000.    
+    f=1000.    
     
     onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.))
     
     poles = []
-    poles.append(Pole(-.1,.1,True))
-    poles.append(Pole(-.1,-.1,False))
     
-    poles.append(Pole(.1,.1,False))
-    poles.append(Pole(.1,-.1,True))
+    #Ajout des monopoles
+    poles.append(Pole(0,0,False))
+    poles.append(Pole(0,-1,False))
+    poles.append(Pole(0,1,False))
+    poles.append(Pole(0,-2,False))
+    poles.append(Pole(0,2,False))
     
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y, opposite_phase=p.opp_phase) for p in poles])
     
     #PLOT DE LA SOURCE
 
-    x = np.linspace(-5,5,1000)
-    y = np.linspace(-5,5,1000)
+    x = np.linspace(-1,15,1000)
+    y = np.linspace(-8,8,1000)
     xx,yy = np.meshgrid(x,y)
     source = get_source_pressure(xx,yy,1)
-    plt.imshow(source,vmin=-5,vmax=5,cmap='Blues',extent=[-5,5,-5,5])
+    plt.imshow(source,vmin=-5,vmax=5,cmap='Blues_r',extent=[x[0],x[-1],y[0],y[-1]])
     plt.title("Representation 2D de la source pour $f={}$".format(f))
     plt.xlabel("$x$")
     plt.ylabel("$y$")
@@ -67,9 +69,8 @@ if __name__ == "__main__":
     
     #PLOT DE LA DIRECTIVITE DE LA SOURCE    
     
-    intensity = get_intensity_around_circle(3,get_source_pressure,200,1/f)
+    intensity = get_intensity_around_circle(8,get_source_pressure,1000,1/f)
     plt.polar(*intensity)
-    plt.savefig("polar_bipole.png")
     plt.title("Directivite de la source pour $f={}$".format(f))
     plt.show()
     
