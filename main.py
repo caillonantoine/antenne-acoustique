@@ -45,7 +45,7 @@ def animation(wave,timeline,vmin,vmax):
 	vmin: valeur maximale affichée
 	vmax: valeur minimale affichée"""
 	for i,elm in enumerate(timeline):
-		plt.imsave('image_{:06d}'.format(i),wave(elm),vmin=vmin,vmax=vmax,cmap='RdBu')
+		plt.imsave('image_{:06d}'.format(i),wave(elm),vmin=vmin,vmax=vmax,cmap='Blues')
 		
 def representation_physique(poles,X,Y,Z,simulation):
 	"""Fonction représentant dans un espace 3d les résultats de la simulation.
