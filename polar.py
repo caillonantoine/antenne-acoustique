@@ -45,16 +45,15 @@ def get_intensity_around_circle(r,pressure,pas,period):
 #%%
     
 if __name__ == "__main__":
-    f=4000. #Définition de la fréquence
+    f=3000. #Définition de la fréquence
     
     onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.)) #Définition d'une classe d'onde
     
     poles = [] #Liste de poles
     
     #Ajout des monopoles
-    for y in [-2,-1,0,1,2]:
-        poles.append(Pole(-.1,y,True))
-        poles.append(Pole(.1,y,False))
+    poles.append(Pole(.1,0,True))
+    poles.append(Pole(-.1,0,False))
     
     #On définit une fonction donnant la pression en x,y,t
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y, opposite_phase=p.opp_phase) for p in poles])
@@ -75,11 +74,16 @@ if __name__ == "__main__":
     
     #PLOT DE LA DIRECTIVITE DE LA SOURCE    
     #On récupère les valeurs d'intensité
-    intensity = get_intensity_around_circle(4,get_source_pressure,1000,1/f)
+    intensity = get_intensity_around_circle(1,get_source_pressure,1000,1/f)
     plt.polar(*intensity)
-    plt.title("Directivite de la source pour $f={}$".format(f))
-    plt.show()
     
+    #PLOT DE LA DIRECTIVITE THEORIQUE D'UN DIPOLE
+    space = np.linspace(0,2*pi,1000)
+    directivite = abs(np.cos(space))
+    plt.polar(space,directivite)
+    plt.legend(["Mesured","Theoric"])
+    plt.savefig("polarplot.eps")
+    plt.show()
     
     
 
