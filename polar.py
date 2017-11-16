@@ -59,7 +59,7 @@ if __name__ == "__main__":
     
     #Ajout des monopoles
     for k in np.arange(-3,3,1):
-        poles.append(Pole(0,k*10e-2,True,phase=-k*10e-2))
+        poles.append(Pole(0,k*10e-2,True))
     
     #On définit une fonction donnant la pression en x,y,t
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y,\
