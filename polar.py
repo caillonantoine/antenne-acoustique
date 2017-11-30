@@ -1,7 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Nov 30 11:42:24 2017
+
+@author: gdias
+"""
+
 #coding:utf-8
 import numpy as np
 import matplotlib.pyplot as plt
 from math import *
+import pickle
+
 
 class Wave(object):
     """Définit une onde, comportant s0, sa pulsation, son nombre d'onde k"""
@@ -26,12 +36,13 @@ def get_pressure(wave,x,y,t,dx=0,dy=0,opposite_phase=False,phase=0,ponderation=1
     -une onde (class Wave)
     -un pole (class Pole), dx,dy,opposition de phase
     -un point d'évalution x,y,t"""
+    
     r = np.asarray(np.sqrt(np.power(x-dx,2) + np.power(y+dy,2)),dtype=np.float)
     if opposite_phase:
-        return -ponderation*(np.real((wave.s0/r)*np.exp(wave.k*r*1j -\
+        return -(np.real(ponderation*(wave.s0/r)*np.exp(wave.k*r*1j -\
         (wave.w + phase)*t*1j))).astype('float')
     else:
-        return ponderation*(np.real((wave.s0/r)*np.exp(wave.k*r*1j -\
+        return (np.real(ponderation*(wave.s0/r)*np.exp(wave.k*r*1j -\
         (wave.w + phase)*t*1j))).astype('float')
     
 def get_intensity_around_circle(r,pressure,pas,period):
@@ -50,30 +61,33 @@ def get_intensity_around_circle(r,pressure,pas,period):
 #%%
     
 if __name__ == "__main__":
-    f=500. #Définition de la fréquence
+    f=5000. #Définition de la fréquence
     longueur_onde = 340/f
-    
+    with open('coef.txt','rb') as text:
+        coef = pickle.load(text)
+    print(coef)
+    print(len(coef))
     onde = Wave(1,2*pi*f,sqrt(2*pi*f/340.)) #Définition d'une classe d'onde
     
     poles = [] #Liste de poles
     
     #Ajout des monopoles
-    for k in np.arange(-3,3,1):
-        poles.append(Pole(0,k*10e-2,True))
+    for i,k in enumerate(np.arange(-6,6,1)):
+        poles.append(Pole(k/10.,0,True,ponderation=coef[i]))
     
     #On définit une fonction donnant la pression en x,y,t
     get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y,\
     opposite_phase=p.opp_phase,phase=p.phase,ponderation=p.ponderation) for p in poles])
     
-    zoom_factor = 1
+    zoom_factor = 2
     #On représente la source d'émissions
     x = np.linspace(-zoom_factor,zoom_factor,1000) #SCALE X
     y = np.linspace(-zoom_factor,zoom_factor,1000) #SCALE Y
     xx,yy = np.meshgrid(x,y) #SCALE XY
     
-    source = get_source_pressure(xx,yy,1) #On évalue la pression instantanée pour t=1
+    source = get_source_pressure(xx,yy,1.5) #On évalue la pression instantanée pour t=1
     #PLOT DE LA SOURCE
-    plt.imshow(source,cmap='Blues',vmin=-50,vmax=50,extent=[x[0],x[-1],y[0],y[-1]])
+    plt.imshow(source,cmap='Blues',vmin=-10,vmax=10,extent=[x[0],x[-1],y[0],y[-1]])
     plt.title("Representation 2D de la source pour $f={}$".format(f))
     plt.xlabel("$x$")
     plt.ylabel("$y$")
@@ -81,18 +95,14 @@ if __name__ == "__main__":
     
     #PLOT DE LA DIRECTIVITE DE LA SOURCE    
     #On récupère les valeurs d'intensité
-    intensity = get_intensity_around_circle(10,get_source_pressure,1000,1/f)
+    intensity = get_intensity_around_circle(2,get_source_pressure,1000,1/f)
     plt.polar(*intensity,color='orange')
-    #%%
-    #PLOT DE LA DIRECTIVITE THEORIQUE D'UN DIPOLE
+    #%% DE LA DIRECTIVITE THEORIQUE D'UN DIPOLE
     space = np.linspace(0,2*pi,1000)
     directivite = abs(np.cos(space))
-    plt.polar(space,directivite,color='blue')
-    plt.legend(["Mesured","Theoric"])
-    plt.savefig("polarplot.eps")
+    #plt.polar(space,directivite,color='blue')
+    #plt.legend(["Mesured","Theoric"])
+    #plt.savefig("polarplot.eps")
     plt.show()
-    
-    
-
     
     
