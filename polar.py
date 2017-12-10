@@ -95,7 +95,46 @@ def validation():
     plt.legend(["Simulation","Theorie"])
     plt.savefig("validation.svg")
     plt.show()
-  
+
+def application(f):
+    lamb = 340/f
+    onde = Wave(1,2*np.pi*f,2*np.pi/lamb)
+    poles = []
+    poles.append(Pole(10e-2,0,False,ponderation=.01))
+    poles.append(Pole(20e-2,0,False,ponderation=-.0757-.0427j))
+    poles.append(Pole(30e-2,0,False,ponderation=.1752+.2895j))
+    poles.append(Pole(40e-2,0,False,ponderation=-.0239-.7754j))
+    poles.append(Pole(50e-2,0,False,ponderation=-.5352+1.0217j))
+    poles.append(Pole(60e-2,0,False,ponderation=.9680-.6272j))
+    poles.append(Pole(70e-2,0,False,ponderation=-.7743+.0478j))
+    poles.append(Pole(80e-2,0,False,ponderation=.3044+.1477j))
+    poles.append(Pole(90e-2,0,False,ponderation=-.0495-.0714j))
+    poles.append(Pole(100e-2,0,False,ponderation=.0009+.01j))
+
+	#On définit une fonction donnant la pression en x,y,t
+    get_source_pressure = lambda x,y,t: sum([get_pressure(onde,x,y,t,p.x,p.y,\
+    opposite_phase=p.opp_phase,phase=p.phase,ponderation=p.ponderation) for p in poles])
+    
+    zoom_factor = 4
+    #On représente la source d'émissions
+    x = np.linspace(-zoom_factor,zoom_factor,1000) #SCALE X
+    y = np.linspace(-zoom_factor,zoom_factor,1000) #SCALE Y
+    xx,yy = np.meshgrid(x,y) #SCALE XY
+    
+    source = get_source_pressure(xx,yy,1.5) #On évalue la pression instantanée pour t=1
+    #PLOT DE LA SOURCE
+    #plt.imshow(source,cmap='Blues',vmin=-10,vmax=10,extent=[x[0],x[-1],y[0],y[-1]])
+    #plt.title("Representation 2D de la source pour $f={}$".format(f))
+    #plt.xlabel("$x$")
+    #plt.ylabel("$y$")
+    #plt.show()
+    
+    #PLOT DE LA DIRECTIVITE DE LA SOURCE    
+    #On récupère les valeurs d'intensité
+    intensity = get_intensity_around_circle(2,get_source_pressure,1000,1/f)
+    plt.polar(*intensity)
+    #plt.show()
+
 def ponderation():
     f=5000. #Définition de la fréquence
     longueur_onde = 340/f
