@@ -102,7 +102,7 @@ def application(f):
     onde = Wave(1,2*np.pi*f,2*np.pi/lamb)
     poles = []
     
-    coef = mat('coef.mat')['ai'][0]
+    coef = mat('ponderation.mat')['phi'][0]
     for i,o in enumerate(coef):
         poles.append(Pole(i*10e-2,0,False,ponderation=o))
 
@@ -118,11 +118,12 @@ def application(f):
     
     source = get_source_pressure(xx,yy,1.5) #On évalue la pression instantanée pour t=1
     #PLOT DE LA SOURCE
+    """
     plt.imshow(source,cmap='Blues',vmin=-10,vmax=10,extent=[x[0],x[-1],y[0],y[-1]])
     plt.title("Representation 2D de la source pour $f={}$".format(f))
     plt.xlabel("$x$")
     plt.ylabel("$y$")
-    plt.show()
+    plt.show()"""
     
     #PLOT DE LA DIRECTIVITE DE LA SOURCE    
     #On récupère les valeurs d'intensité
@@ -176,3 +177,6 @@ def ponderation():
     plt.show()
     
     
+def app():
+    for f in [500]:
+        application(f)
